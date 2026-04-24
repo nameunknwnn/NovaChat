@@ -1,4 +1,6 @@
-const chats=["naklsdnak","complete","blue2"]
+import { Button } from "../ui/button"
+
+const chats=["naklsdnakawdasjndalskndalksnda ","complete","blue2"]
 
 export default function ChatHistory( {text}:{text:string}){
     const filteredChats=chats.filter((chat)=>{
@@ -9,7 +11,7 @@ export default function ChatHistory( {text}:{text:string}){
             <div className="text-xl text-black">List of Chats</div>
                 {filteredChats.map((chat)=>{
                     return(
-                        <div className="text-sm text-black">{chat}</div>
+                        <Button className="text-sm flex w-[200px] overflow-hidden text-black bg-green-500">{chat}</Button>
                     )
                 })}
         </div>

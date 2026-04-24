@@ -12,7 +12,7 @@ useEffect(()=>{
     const timer = setTimeout(()=>{
         console.log(text);
         setDebouncedtext(text);
-    },1000);
+    },500);
     return ()=>clearTimeout(timer);    
 },[text])
     return(
