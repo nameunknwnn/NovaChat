@@ -6,10 +6,12 @@ import { useEffect, useState } from "react";
 export default function Searchbox(){
 
 const [text,setText]=useState("");
+const [debouncedtext,setDebouncedtext]=useState("");
 
 useEffect(()=>{
     const timer = setTimeout(()=>{
-        console.log(text)
+        console.log(text);
+        setDebouncedtext(text);
     },1000);
     return ()=>clearTimeout(timer);    
 },[text])
@@ -21,7 +23,7 @@ useEffect(()=>{
                 value={text}
                 onChange={(e)=>{setText(e.target.value)}}/>
             </div>
-            <ChatHistory/>
+            <ChatHistory text={debouncedtext} />
         </div>
     )
 }
