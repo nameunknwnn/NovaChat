@@ -1,6 +1,6 @@
 import { Button } from "../ui/button"
 
-const chats=["naklsdnakawdasjndalskndalksnda ","complete","blue2"]
+const chats=["intial     ","complete","blue2"]
 
 export default function ChatHistory( {text}:{text:string}){
     const filteredChats=chats.filter((chat)=>{
