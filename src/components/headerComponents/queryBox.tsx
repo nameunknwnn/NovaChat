@@ -12,7 +12,7 @@ export default function QueryBox({query,setQuery,shown,setShown}:{query:string ,
         const timer= setTimeout(()=>{
             console.log(query);
         },1000)
-        return ()=>clearTimeout(); 
+        return ()=>clearTimeout(timer); 
     },[query])
 
 
