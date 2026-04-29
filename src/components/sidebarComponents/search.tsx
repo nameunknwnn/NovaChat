@@ -10,7 +10,7 @@ const [debouncedtext,setDebouncedtext]=useState("");
 
 useEffect(()=>{
     const timer = setTimeout(()=>{
-        console.log(text);
+        console.log(text)
         setDebouncedtext(text);
     },500);
     return ()=>clearTimeout(timer);    
