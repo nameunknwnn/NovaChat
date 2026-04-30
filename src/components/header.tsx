@@ -9,7 +9,7 @@ const questions={create:["How Does AI Work", "Are Black Holes real?","how many r
 }
 
 export default function header(){
-    const [query,setQuery]=useState();
+    const [query,setQuery]=useState("");
     const [shown,setShown]=useState(true);
     return(
         <div className="h-screen">
