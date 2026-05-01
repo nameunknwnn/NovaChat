@@ -217,7 +217,7 @@ export type UserScalarWhereWithAggregatesInput = {
 }
 
 export type UserCreateInput = {
-  id: string
+  id?: string
   name: string
   email: string
   password?: string | null
@@ -225,7 +225,7 @@ export type UserCreateInput = {
 }
 
 export type UserUncheckedCreateInput = {
-  id: string
+  id?: string
   name: string
   email: string
   password?: string | null
@@ -249,7 +249,7 @@ export type UserUncheckedUpdateInput = {
 }
 
 export type UserCreateManyInput = {
-  id: string
+  id?: string
   name: string
   email: string
   password?: string | null
@@ -318,14 +318,14 @@ export type UserUpdateOneRequiredWithoutConversationNestedInput = {
 }
 
 export type UserCreateWithoutConversationInput = {
-  id: string
+  id?: string
   name: string
   email: string
   password?: string | null
 }
 
 export type UserUncheckedCreateWithoutConversationInput = {
-  id: string
+  id?: string
   name: string
   email: string
   password?: string | null

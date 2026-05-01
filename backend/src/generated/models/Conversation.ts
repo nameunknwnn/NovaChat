@@ -220,7 +220,7 @@ export type ConversationScalarWhereWithAggregatesInput = {
 }
 
 export type ConversationCreateInput = {
-  id: string
+  id?: string
   slug?: string
   title: string
   user: Prisma.UserCreateNestedOneWithoutConversationInput
@@ -228,7 +228,7 @@ export type ConversationCreateInput = {
 }
 
 export type ConversationUncheckedCreateInput = {
-  id: string
+  id?: string
   slug?: string
   title: string
   userid: string
@@ -252,7 +252,7 @@ export type ConversationUncheckedUpdateInput = {
 }
 
 export type ConversationCreateManyInput = {
-  id: string
+  id?: string
   slug?: string
   title: string
   userid: string
@@ -364,14 +364,14 @@ export type ConversationUpdateOneRequiredWithoutMessageNestedInput = {
 }
 
 export type ConversationCreateWithoutUserInput = {
-  id: string
+  id?: string
   slug?: string
   title: string
   message?: Prisma.MessageCreateNestedManyWithoutConversationInput
 }
 
 export type ConversationUncheckedCreateWithoutUserInput = {
-  id: string
+  id?: string
   slug?: string
   title: string
   message?: Prisma.MessageUncheckedCreateNestedManyWithoutConversationInput
@@ -414,14 +414,14 @@ export type ConversationScalarWhereInput = {
 }
 
 export type ConversationCreateWithoutMessageInput = {
-  id: string
+  id?: string
   slug?: string
   title: string
   user: Prisma.UserCreateNestedOneWithoutConversationInput
 }
 
 export type ConversationUncheckedCreateWithoutMessageInput = {
-  id: string
+  id?: string
   slug?: string
   title: string
   userid: string
@@ -458,7 +458,7 @@ export type ConversationUncheckedUpdateWithoutMessageInput = {
 }
 
 export type ConversationCreateManyUserInput = {
-  id: string
+  id?: string
   slug?: string
   title: string
 }

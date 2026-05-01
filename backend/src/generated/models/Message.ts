@@ -20,26 +20,36 @@ export type MessageModel = runtime.Types.Result.DefaultSelection<Prisma.$Message
 
 export type AggregateMessage = {
   _count: MessageCountAggregateOutputType | null
+  _avg: MessageAvgAggregateOutputType | null
+  _sum: MessageSumAggregateOutputType | null
   _min: MessageMinAggregateOutputType | null
   _max: MessageMaxAggregateOutputType | null
 }
 
+export type MessageAvgAggregateOutputType = {
+  id: number | null
+}
+
+export type MessageSumAggregateOutputType = {
+  id: number | null
+}
+
 export type MessageMinAggregateOutputType = {
-  id: string | null
+  id: number | null
   content: string | null
   type: $Enums.ContentType | null
   title: string | null
   conversationid: string | null
-  createdat: Date | null
+  createdate: Date | null
 }
 
 export type MessageMaxAggregateOutputType = {
-  id: string | null
+  id: number | null
   content: string | null
   type: $Enums.ContentType | null
   title: string | null
   conversationid: string | null
-  createdat: Date | null
+  createdate: Date | null
 }
 
 export type MessageCountAggregateOutputType = {
@@ -48,10 +58,18 @@ export type MessageCountAggregateOutputType = {
   type: number
   title: number
   conversationid: number
-  createdat: number
+  createdate: number
   _all: number
 }
 
+
+export type MessageAvgAggregateInputType = {
+  id?: true
+}
+
+export type MessageSumAggregateInputType = {
+  id?: true
+}
 
 export type MessageMinAggregateInputType = {
   id?: true
@@ -59,7 +77,7 @@ export type MessageMinAggregateInputType = {
   type?: true
   title?: true
   conversationid?: true
-  createdat?: true
+  createdate?: true
 }
 
 export type MessageMaxAggregateInputType = {
@@ -68,7 +86,7 @@ export type MessageMaxAggregateInputType = {
   type?: true
   title?: true
   conversationid?: true
-  createdat?: true
+  createdate?: true
 }
 
 export type MessageCountAggregateInputType = {
@@ -77,7 +95,7 @@ export type MessageCountAggregateInputType = {
   type?: true
   title?: true
   conversationid?: true
-  createdat?: true
+  createdate?: true
   _all?: true
 }
 
@@ -119,6 +137,18 @@ export type MessageAggregateArgs<ExtArgs extends runtime.Types.Extensions.Intern
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: MessageAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: MessageSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: MessageMinAggregateInputType
@@ -149,18 +179,22 @@ export type MessageGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   _count?: MessageCountAggregateInputType | true
+  _avg?: MessageAvgAggregateInputType
+  _sum?: MessageSumAggregateInputType
   _min?: MessageMinAggregateInputType
   _max?: MessageMaxAggregateInputType
 }
 
 export type MessageGroupByOutputType = {
-  id: string
+  id: number
   content: string
   type: $Enums.ContentType
   title: string
   conversationid: string
-  createdat: Date
+  createdate: Date
   _count: MessageCountAggregateOutputType | null
+  _avg: MessageAvgAggregateOutputType | null
+  _sum: MessageSumAggregateOutputType | null
   _min: MessageMinAggregateOutputType | null
   _max: MessageMaxAggregateOutputType | null
 }
@@ -184,12 +218,12 @@ export type MessageWhereInput = {
   AND?: Prisma.MessageWhereInput | Prisma.MessageWhereInput[]
   OR?: Prisma.MessageWhereInput[]
   NOT?: Prisma.MessageWhereInput | Prisma.MessageWhereInput[]
-  id?: Prisma.StringFilter<"Message"> | string
+  id?: Prisma.IntFilter<"Message"> | number
   content?: Prisma.StringFilter<"Message"> | string
   type?: Prisma.EnumContentTypeFilter<"Message"> | $Enums.ContentType
   title?: Prisma.StringFilter<"Message"> | string
   conversationid?: Prisma.StringFilter<"Message"> | string
-  createdat?: Prisma.DateTimeFilter<"Message"> | Date | string
+  createdate?: Prisma.DateTimeFilter<"Message"> | Date | string
   conversation?: Prisma.XOR<Prisma.ConversationScalarRelationFilter, Prisma.ConversationWhereInput>
 }
 
@@ -199,12 +233,12 @@ export type MessageOrderByWithRelationInput = {
   type?: Prisma.SortOrder
   title?: Prisma.SortOrder
   conversationid?: Prisma.SortOrder
-  createdat?: Prisma.SortOrder
+  createdate?: Prisma.SortOrder
   conversation?: Prisma.ConversationOrderByWithRelationInput
 }
 
 export type MessageWhereUniqueInput = Prisma.AtLeast<{
-  id?: string
+  id?: number
   AND?: Prisma.MessageWhereInput | Prisma.MessageWhereInput[]
   OR?: Prisma.MessageWhereInput[]
   NOT?: Prisma.MessageWhereInput | Prisma.MessageWhereInput[]
@@ -212,7 +246,7 @@ export type MessageWhereUniqueInput = Prisma.AtLeast<{
   type?: Prisma.EnumContentTypeFilter<"Message"> | $Enums.ContentType
   title?: Prisma.StringFilter<"Message"> | string
   conversationid?: Prisma.StringFilter<"Message"> | string
-  createdat?: Prisma.DateTimeFilter<"Message"> | Date | string
+  createdate?: Prisma.DateTimeFilter<"Message"> | Date | string
   conversation?: Prisma.XOR<Prisma.ConversationScalarRelationFilter, Prisma.ConversationWhereInput>
 }, "id">
 
@@ -222,84 +256,83 @@ export type MessageOrderByWithAggregationInput = {
   type?: Prisma.SortOrder
   title?: Prisma.SortOrder
   conversationid?: Prisma.SortOrder
-  createdat?: Prisma.SortOrder
+  createdate?: Prisma.SortOrder
   _count?: Prisma.MessageCountOrderByAggregateInput
+  _avg?: Prisma.MessageAvgOrderByAggregateInput
   _max?: Prisma.MessageMaxOrderByAggregateInput
   _min?: Prisma.MessageMinOrderByAggregateInput
+  _sum?: Prisma.MessageSumOrderByAggregateInput
 }
 
 export type MessageScalarWhereWithAggregatesInput = {
   AND?: Prisma.MessageScalarWhereWithAggregatesInput | Prisma.MessageScalarWhereWithAggregatesInput[]
   OR?: Prisma.MessageScalarWhereWithAggregatesInput[]
   NOT?: Prisma.MessageScalarWhereWithAggregatesInput | Prisma.MessageScalarWhereWithAggregatesInput[]
-  id?: Prisma.StringWithAggregatesFilter<"Message"> | string
+  id?: Prisma.IntWithAggregatesFilter<"Message"> | number
   content?: Prisma.StringWithAggregatesFilter<"Message"> | string
   type?: Prisma.EnumContentTypeWithAggregatesFilter<"Message"> | $Enums.ContentType
   title?: Prisma.StringWithAggregatesFilter<"Message"> | string
   conversationid?: Prisma.StringWithAggregatesFilter<"Message"> | string
-  createdat?: Prisma.DateTimeWithAggregatesFilter<"Message"> | Date | string
+  createdate?: Prisma.DateTimeWithAggregatesFilter<"Message"> | Date | string
 }
 
 export type MessageCreateInput = {
-  id: string
   content: string
   type: $Enums.ContentType
   title: string
-  createdat?: Date | string
+  createdate?: Date | string
   conversation: Prisma.ConversationCreateNestedOneWithoutMessageInput
 }
 
 export type MessageUncheckedCreateInput = {
-  id: string
+  id?: number
   content: string
   type: $Enums.ContentType
   title: string
   conversationid: string
-  createdat?: Date | string
+  createdate?: Date | string
 }
 
 export type MessageUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumContentTypeFieldUpdateOperationsInput | $Enums.ContentType
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  createdat?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   conversation?: Prisma.ConversationUpdateOneRequiredWithoutMessageNestedInput
 }
 
 export type MessageUncheckedUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumContentTypeFieldUpdateOperationsInput | $Enums.ContentType
   title?: Prisma.StringFieldUpdateOperationsInput | string
   conversationid?: Prisma.StringFieldUpdateOperationsInput | string
-  createdat?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type MessageCreateManyInput = {
-  id: string
+  id?: number
   content: string
   type: $Enums.ContentType
   title: string
   conversationid: string
-  createdat?: Date | string
+  createdate?: Date | string
 }
 
 export type MessageUpdateManyMutationInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumContentTypeFieldUpdateOperationsInput | $Enums.ContentType
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  createdat?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type MessageUncheckedUpdateManyInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumContentTypeFieldUpdateOperationsInput | $Enums.ContentType
   title?: Prisma.StringFieldUpdateOperationsInput | string
   conversationid?: Prisma.StringFieldUpdateOperationsInput | string
-  createdat?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type MessageListRelationFilter = {
@@ -318,7 +351,11 @@ export type MessageCountOrderByAggregateInput = {
   type?: Prisma.SortOrder
   title?: Prisma.SortOrder
   conversationid?: Prisma.SortOrder
-  createdat?: Prisma.SortOrder
+  createdate?: Prisma.SortOrder
+}
+
+export type MessageAvgOrderByAggregateInput = {
+  id?: Prisma.SortOrder
 }
 
 export type MessageMaxOrderByAggregateInput = {
@@ -327,7 +364,7 @@ export type MessageMaxOrderByAggregateInput = {
   type?: Prisma.SortOrder
   title?: Prisma.SortOrder
   conversationid?: Prisma.SortOrder
-  createdat?: Prisma.SortOrder
+  createdate?: Prisma.SortOrder
 }
 
 export type MessageMinOrderByAggregateInput = {
@@ -336,7 +373,11 @@ export type MessageMinOrderByAggregateInput = {
   type?: Prisma.SortOrder
   title?: Prisma.SortOrder
   conversationid?: Prisma.SortOrder
-  createdat?: Prisma.SortOrder
+  createdate?: Prisma.SortOrder
+}
+
+export type MessageSumOrderByAggregateInput = {
+  id?: Prisma.SortOrder
 }
 
 export type MessageCreateNestedManyWithoutConversationInput = {
@@ -389,20 +430,27 @@ export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
 }
 
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type MessageCreateWithoutConversationInput = {
-  id: string
   content: string
   type: $Enums.ContentType
   title: string
-  createdat?: Date | string
+  createdate?: Date | string
 }
 
 export type MessageUncheckedCreateWithoutConversationInput = {
-  id: string
+  id?: number
   content: string
   type: $Enums.ContentType
   title: string
-  createdat?: Date | string
+  createdate?: Date | string
 }
 
 export type MessageCreateOrConnectWithoutConversationInput = {
@@ -435,44 +483,43 @@ export type MessageScalarWhereInput = {
   AND?: Prisma.MessageScalarWhereInput | Prisma.MessageScalarWhereInput[]
   OR?: Prisma.MessageScalarWhereInput[]
   NOT?: Prisma.MessageScalarWhereInput | Prisma.MessageScalarWhereInput[]
-  id?: Prisma.StringFilter<"Message"> | string
+  id?: Prisma.IntFilter<"Message"> | number
   content?: Prisma.StringFilter<"Message"> | string
   type?: Prisma.EnumContentTypeFilter<"Message"> | $Enums.ContentType
   title?: Prisma.StringFilter<"Message"> | string
   conversationid?: Prisma.StringFilter<"Message"> | string
-  createdat?: Prisma.DateTimeFilter<"Message"> | Date | string
+  createdate?: Prisma.DateTimeFilter<"Message"> | Date | string
 }
 
 export type MessageCreateManyConversationInput = {
-  id: string
+  id?: number
   content: string
   type: $Enums.ContentType
   title: string
-  createdat?: Date | string
+  createdate?: Date | string
 }
 
 export type MessageUpdateWithoutConversationInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumContentTypeFieldUpdateOperationsInput | $Enums.ContentType
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  createdat?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type MessageUncheckedUpdateWithoutConversationInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumContentTypeFieldUpdateOperationsInput | $Enums.ContentType
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  createdat?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type MessageUncheckedUpdateManyWithoutConversationInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumContentTypeFieldUpdateOperationsInput | $Enums.ContentType
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  createdat?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -483,7 +530,7 @@ export type MessageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   type?: boolean
   title?: boolean
   conversationid?: boolean
-  createdat?: boolean
+  createdate?: boolean
   conversation?: boolean | Prisma.ConversationDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["message"]>
 
@@ -493,7 +540,7 @@ export type MessageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   type?: boolean
   title?: boolean
   conversationid?: boolean
-  createdat?: boolean
+  createdate?: boolean
   conversation?: boolean | Prisma.ConversationDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["message"]>
 
@@ -503,7 +550,7 @@ export type MessageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   type?: boolean
   title?: boolean
   conversationid?: boolean
-  createdat?: boolean
+  createdate?: boolean
   conversation?: boolean | Prisma.ConversationDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["message"]>
 
@@ -513,10 +560,10 @@ export type MessageSelectScalar = {
   type?: boolean
   title?: boolean
   conversationid?: boolean
-  createdat?: boolean
+  createdate?: boolean
 }
 
-export type MessageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "content" | "type" | "title" | "conversationid" | "createdat", ExtArgs["result"]["message"]>
+export type MessageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "content" | "type" | "title" | "conversationid" | "createdate", ExtArgs["result"]["message"]>
 export type MessageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   conversation?: boolean | Prisma.ConversationDefaultArgs<ExtArgs>
 }
@@ -533,12 +580,12 @@ export type $MessagePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     conversation: Prisma.$ConversationPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id: string
+    id: number
     content: string
     type: $Enums.ContentType
     title: string
     conversationid: string
-    createdat: Date
+    createdate: Date
   }, ExtArgs["result"]["message"]>
   composites: {}
 }
@@ -963,12 +1010,12 @@ export interface Prisma__MessageClient<T, Null = never, ExtArgs extends runtime.
  * Fields of the Message model
  */
 export interface MessageFieldRefs {
-  readonly id: Prisma.FieldRef<"Message", 'String'>
+  readonly id: Prisma.FieldRef<"Message", 'Int'>
   readonly content: Prisma.FieldRef<"Message", 'String'>
   readonly type: Prisma.FieldRef<"Message", 'ContentType'>
   readonly title: Prisma.FieldRef<"Message", 'String'>
   readonly conversationid: Prisma.FieldRef<"Message", 'String'>
-  readonly createdat: Prisma.FieldRef<"Message", 'DateTime'>
+  readonly createdate: Prisma.FieldRef<"Message", 'DateTime'>
 }
     
 

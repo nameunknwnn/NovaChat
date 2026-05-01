@@ -23,12 +23,12 @@ CREATE TABLE "Conversation" (
 
 -- CreateTable
 CREATE TABLE "Message" (
-    "id" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
     "content" TEXT NOT NULL,
     "type" "ContentType" NOT NULL,
     "title" TEXT NOT NULL,
     "conversationid" TEXT NOT NULL,
-    "createdat" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Message_pkey" PRIMARY KEY ("id")
 );

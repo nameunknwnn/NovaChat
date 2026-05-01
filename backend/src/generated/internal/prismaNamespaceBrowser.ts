@@ -98,7 +98,7 @@ export const MessageScalarFieldEnum = {
   type: 'type',
   title: 'title',
   conversationid: 'conversationid',
-  createdat: 'createdat'
+  createdate: 'createdate'
 } as const
 
 export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
