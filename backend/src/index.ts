@@ -180,7 +180,7 @@ app.get(
 
     const conversation = await prisma.conversation.findFirst({
       where: {
-        conversationid: conversationid,
+        id: conversationid,
       },
     });
 
