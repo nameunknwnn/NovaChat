@@ -9,9 +9,9 @@
 * 🟢 You can import this file directly.
 */
 
-export const ContentType = {
+export const ContentRole = {
   ASSISTANT: 'ASSISTANT',
   USER: 'USER'
 } as const
 
-export type ContentType = (typeof ContentType)[keyof typeof ContentType]
+export type ContentRole = (typeof ContentRole)[keyof typeof ContentRole]

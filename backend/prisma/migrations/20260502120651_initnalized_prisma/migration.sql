@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "ContentType" AS ENUM ('ASSISTANT', 'USER');
+CREATE TYPE "ContentRole" AS ENUM ('ASSISTANT', 'USER');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -14,7 +14,6 @@ CREATE TABLE "User" (
 -- CreateTable
 CREATE TABLE "Conversation" (
     "id" TEXT NOT NULL,
-    "slug" TEXT NOT NULL DEFAULT '',
     "title" TEXT NOT NULL,
     "userid" TEXT NOT NULL,
 
@@ -25,7 +24,7 @@ CREATE TABLE "Conversation" (
 CREATE TABLE "Message" (
     "id" SERIAL NOT NULL,
     "content" TEXT NOT NULL,
-    "type" "ContentType" NOT NULL,
+    "role" "ContentRole" NOT NULL,
     "title" TEXT NOT NULL,
     "conversationid" TEXT NOT NULL,
     "createdate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

@@ -84,7 +84,6 @@ export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof User
 
 export const ConversationScalarFieldEnum = {
   id: 'id',
-  slug: 'slug',
   title: 'title',
   userid: 'userid'
 } as const
@@ -95,7 +94,7 @@ export type ConversationScalarFieldEnum = (typeof ConversationScalarFieldEnum)[k
 export const MessageScalarFieldEnum = {
   id: 'id',
   content: 'content',
-  type: 'type',
+  role: 'role',
   title: 'title',
   conversationid: 'conversationid',
   createdate: 'createdate'

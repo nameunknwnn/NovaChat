@@ -23,7 +23,6 @@ model User{
 
 model Conversation{
   id         String @id @default(uuid())
-  slug       String @default("")
   title      String
   user       User   @relation(fields: [userid],references: [id])
   userid     String
@@ -33,14 +32,14 @@ model Conversation{
 model Message{
   id         Int @id @default(autoincrement())
   content    String
-  type       ContentType
+  role       ContentRole
   title      String
   conversation       Conversation   @relation(fields: [conversationid],references: [id])
   conversationid     String
   createdate  DateTime @default(now())
 }
 
-enum ContentType{
+enum ContentRole{
   ASSISTANT
   USER
 }
