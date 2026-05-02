@@ -3,83 +3,79 @@ import "dotenv/config";
 import express from "express";
 import { OpenRouter } from "@openrouter/sdk";
 import { prisma } from "./lib/prisma";
-import jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken";
 import middlewareauth from "./lib/middlewareauth";
-
 
 const app = express();
 
 app.use(express.json());
 
 //signup
-app.post("/signup",async function(req,res){
-  const email=req.body.email;
-  const password=req.body.password;
+app.post("/signup", async function (req, res) {
+  const email = req.body.email;
+  const password = req.body.password;
 
-  const userfound=await prisma.user.findUnique({
-    where:{
-      email:email
-    }
-  })
+  const userfound = await prisma.user.findFirst({
+    where: {
+      email: email,
+    },
+  });
 
-  if (userfound){
-    res.json({message:"email alreay exists"})
+  if (userfound) {
+    res.json({ message: "email alreay exists" });
     return;
   }
-  const token=jwt.sign(email,`${process.env.JWT_SECRET}`)
+  const token = jwt.sign(email, `${process.env.JWT_SECRET}`);
 
-  const user=await prisma.user.create({
-    data:{
-      name:"",
-      email:email,
-      password:password,
-    }
-  })
-  res.json({message:"user created",token:token})
-})
+  const user = await prisma.user.create({
+    data: {
+      name: "",
+      email: email,
+      password: password,
+    },
+  });
+  res.json({ message: "user created", token: token });
+});
 
 //signin
-app.post("/signin",async function(req,res){
-  const email=req.body.email;
-  const password=req.body.password;
-  const token=(req.headers.token);
- 
-  const userfound=await prisma.user.findUnique({
-    where:{
-      email:email,
-      password:password
-    }
-  })
+app.post("/signin", async function (req, res) {
+  const email = req.body.email;
+  const password = req.body.password;
+  const token = req.headers.token;
+
+  const userfound = await prisma.user.findFirst({
+    where: {
+      email: email,
+      password: password,
+    },
+  });
 
   //@ts-ignore
-  const decoded=jwt.verify(token,`${process.env.JWT_SECRET}`);
-  const emaildecoded=decoded.email;
+  const decoded = jwt.verify(token, `${process.env.JWT_SECRET}`);
+  const emaildecoded = decoded.email;
 
-  if (userfound!==emaildecoded){
-    res.json({message:"user not found"})
+  if (userfound !== emaildecoded) {
+    res.json({ message: "user not found" });
     return;
   }
-  res.json({message:"user found"})
-  return(userfound);
-  
-})
+  res.json({ message: "user found" });
+  return userfound;
+});
 
-
-app.post("/conversation",middlewareauth, async function (req: any, res: any) {
-  
+app.post("/conversation", middlewareauth, async function (req: any, res: any) {
   //1.prompt will come from req body
   const prompt = req.body.prompt;
 
   //2.model selected will come from the req body
   const llmnName = req.body.llmnName;
 
-  const email=req.body.email;
+  const email = req.body.email;
 
-  const user= await prisma.user.findUnique({
-    where:{
-      email:email
-    }
-  })
+  const user = await prisma.user.findFirst({
+    where: {
+      email: email,
+    },
+  });
 
   //3.the converstaion is created
   const conversation = await prisma.conversation.create({
@@ -157,41 +153,39 @@ app.post("/conversation",middlewareauth, async function (req: any, res: any) {
   }
 });
 
-//app.get(/conversation) for a user 
-app.get("/conversation", middlewareauth,async function(req,res){
-  const email=req.body.email;
+//app.get(/conversation) for a user
+app.get("/conversation", middlewareauth, async function (req, res) {
+  const email = req.body.email;
 
-  const user= await prisma.user.findUnique({
-      where:{
-        email:email
-      }
-    })
-     
-  const conversation=await prisma.conversation.findMany({
-    where:{
-      userid:user.id
-    }
-  })
-  res.json(conversation)
-  })
- 
+  const user = await prisma.user.findFirst({
+    where: {
+      email: email,
+    },
+  });
 
-
+  const conversation = await prisma.conversation.findMany({
+    where: {
+      userid: user.id,
+    },
+  });
+  res.json(conversation);
+});
 
 //app.get(/specific conversation) for a user
-app.get("/conversation/:conversationid",middlewareauth, async function(req,res){
+app.get(
+  "/conversation/:conversationid",
+  middlewareauth,
+  async function (req, res) {
+    const conversationid = req.params.conversationid;
 
-  const conversationid=req.params.conversationid
-     
-  const conversation=await prisma.conversation.findUnique({
-    where:{
-      conversationid:conversationid
-    }
-  })
+    const conversation = await prisma.conversation.findFirst({
+      where: {
+        conversationid: conversationid,
+      },
+    });
 
-  res.json(conversation)
-  })
- 
-
+    res.json(conversation);
+  },
+);
 
 app.listen(3000);
