@@ -53,25 +53,28 @@ app.post("/signup", async function (req, res) {
 app.post("/signin", async function (req, res) {
   const email=req.body.email;
   const password=req.body.password;
-  try{
-    const user=await prisma.user.findUnique({
-      where:{
-        email:email
+    try{
+      const user=await prisma.user.findUnique({
+        where:{
+          email:email
+        }
+      })
+      if(!user){
+        return res.status(401).json({message:"email not made"})
       }
-    })
-    if(!user){
-      return res.status(401).json({message:"email not made"})
-    }
+      if (!user.password) {
+        return res.status(500).json({ message: "User password not set" });
+      }
 
-    const truepassword= await bcrypt.compare(password,user.password)
-     if(!truepassword){
-      return res.status(401).json({message:"password not correct"})
-    }
-    const token=jwt.sign(email,`${process.env.JWT_SECRET}`)
+      const truepassword= await bcrypt.compare(password,user.password)
+      if(!truepassword){
+        return res.status(401).json({message:"password not correct"})
+      }
+      const token=jwt.sign(email,`${process.env.JWT_SECRET}`)
 
-    res.status(200).json({message:"Signin successful", token:token})
-    
-  }
+      res.status(200).json({message:"Signin successful", token:token})
+      
+    }
   catch(e){
     res.status(500).json(e)
   }
@@ -88,9 +91,14 @@ app.post("/conversation",middlewareauth, async function(req,res){
     },
   });
 
+  if (!user){
+    return res.json({message:"no user found"})
+  }
+
   //3.the converstaion is created
   const conversation = await prisma.conversation.create({
     data: {
+      title:prompt,
       userid: user.id
     },
   });
@@ -99,17 +107,18 @@ app.post("/conversation",middlewareauth, async function(req,res){
     data: {
       content: prompt,
       role: "USER",
-      createdat: "",
+      createdate: "",
       title: "",
       conversationid: conversation.id,
     },
   });
+
   await prisma.conversation.update({
     where: {
       id: conversation.id,
     },
     data: {
-      messageid: query.id,
+      message:query
     },
   });
   res.status(200).json({message:"conversation created"})
@@ -136,6 +145,9 @@ app.post("/chat", middlewareauth, async function (req: any, res: any) {
       id:conversationid
     }
   })
+  if (!conversation){
+    return res.json({message:"conversaiton empty"})
+  }
 
   try {
     const result = await client.chat.send({
@@ -169,7 +181,7 @@ app.post("/chat", middlewareauth, async function (req: any, res: any) {
         id: conversation.id,
       },
       data: {
-        messageid: response.id,
+        message:response
       },
     });
 
@@ -189,6 +201,9 @@ app.get("/conversation", middlewareauth, async function (req, res) {
           email: email,
         },
       });
+      if (!user){
+        return res.json({message:"no user found"})
+      }
 
       const conversation = await prisma.conversation.findMany({
         where: {
@@ -209,8 +224,11 @@ app.get(
   async function (req, res) {
     const userid=req.user.id;
     const conversationid = req.params.conversationid;
+    if (!conversationid || Array.isArray(conversationid)) {
+      return res.json({ message: "invalid conversation id" });
+    }
     try{
-      const conversation = await prisma.conversation.findFirst({
+      const conversation = await prisma.conversation.findUnique({
       where: {
         id: conversationid,
         userid:userid
