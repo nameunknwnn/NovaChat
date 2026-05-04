@@ -103,24 +103,16 @@ app.post("/conversation",middlewareauth, async function(req,res){
     },
   });
 
-  const query = await prisma.message.create({
+  await prisma.message.create({
     data: {
       content: prompt,
       role: "USER",
-      createdate: "",
       title: "",
+      createdate: new Date(),
       conversationid: conversation.id,
     },
   });
 
-  await prisma.conversation.update({
-    where: {
-      id: conversation.id,
-    },
-    data: {
-      message:query
-    },
-  });
   res.status(200).json({message:"conversation created"})
   
 })
@@ -165,23 +157,13 @@ app.post("/chat", middlewareauth, async function (req: any, res: any) {
     const answer = result?.choices[0]?.message.content;
 
     //7. "response" stored in db message
-    const response = await prisma.message.create({
+   await prisma.message.create({
       data: {
         content: answer,
         role: "ASSISTANT",
-        createdat: "",
+        createdate: new Date(),
         title: "",
         conversationid: conversation.id,
-      },
-    });
-
-    //8. store response in the conversation
-    await prisma.conversation.update({
-      where: {
-        id: conversation.id,
-      },
-      data: {
-        message:response
       },
     });
 
