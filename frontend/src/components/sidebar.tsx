@@ -2,13 +2,13 @@
 import { Button } from "./ui/button";
 import Searchbox from "./sidebarComponents/search";
 import ProfileButton from "./sidebarComponents/profilebutton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 
-
-
-
 export default function sidebar() {
+
+  
+
    const [collapsed,setCollapsed]=useState(true)
    return (collapsed?
     <div className="border-r border-black h-screen ">

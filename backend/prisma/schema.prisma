@@ -1,11 +1,7 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
   provider = "prisma-client"
-  output   = "../src/generated"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -14,29 +10,28 @@ datasource db {
 
 
 model User{
-  id         String @id @default(uuid())
-  name       String
-  email      String @unique
-  password   String
-  conversation       Conversation[]
+  id                 String @id @default(uuid())
+  name               String
+  email              String @unique
+  password           String
+  conversations      Conversation[]
 }
 
 model Conversation{
-  id         String @id @default(uuid())
-  title      String
-  user       User   @relation(fields: [userid],references: [id])
-  userid     String
-  message    Message[]
+  id                 String @id @default(uuid())
+  title              String
+  user               User   @relation(fields: [userId],references: [id])
+  userId             String
+  messages           Message[]
 }
 
 model Message{
-  id         Int @id @default(autoincrement())
-  content    String
-  role       ContentRole
-  title      String
-  conversation       Conversation   @relation(fields: [conversationid],references: [id])
-  conversationid     String
-  createdate  DateTime @default(now())
+  id                 Int @id @default(autoincrement())
+  content            String
+  role               ContentRole
+  conversation       Conversation   @relation(fields: [conversationId],references: [id])
+  conversationId     String
+  createdAt          DateTime @default(now())
 }
 
 enum ContentRole{

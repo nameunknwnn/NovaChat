@@ -2,7 +2,8 @@ import { useState } from "react";
 import QueryBox from "./headerComponents/queryBox";
 import WelcomeDashboard from "./headerComponents/welcomeDashboard";
 
-const questions={create:["How Does AI Work", "Are Black Holes real?","how many r's are there in strawberry","how is this?"],
+const questions={
+    create:["How Does AI Work", "Are Black Holes real?","how many r's are there in strawberry","how is this?"],
     explore:["How Does AI Work", "Are Black Holes real?","how many r's are there in strawberry","how is this?"],
     learn:["How Does AI Work", "Are Black Holes real?","how many r's are there in strawberry","how is this?"],
     code:["How Does AI Work", "Are Black Holes real?","how many r's are there in strawberry","how is this?"]

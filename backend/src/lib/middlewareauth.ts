@@ -17,6 +17,7 @@ export default async function middlewareauth(req:Request,res:Response,next:NextF
         }
 
         const decoded=jwt.verify(token,`${process.env.JWT_SECRET}`); 
+        console.log(decoded,"this is decoded")
 
         if (typeof decoded==="string"){
             return res.json({message:"invalid type of jwt"})
