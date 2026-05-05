@@ -55,7 +55,7 @@ export default function Conversation(){
             </div>
 
         ))) : "Loading..."}
-        <QueryBox query={query} setQuery={setQuery} conversationId={conversationId}/>
+        <QueryBox query={query} setQuery={setQuery}  conversationId={conversationId}/>
     </div>)
 
 } 

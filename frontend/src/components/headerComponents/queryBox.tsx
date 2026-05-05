@@ -3,7 +3,7 @@ import { Button } from "../ui/button";
 import { useNavigate } from "react-router";
 
 
-export default function QueryBox({query,setQuery,shown,setShown,conversationId}:{query:string ,shown:boolean,setShown:React.Dispatch<React.SetStateAction<boolean>> ,setQuery: React.Dispatch<React.SetStateAction<string>>,conversationId?:string}){
+export default function QueryBox({query,setQuery,shown,setShown,conversationId}:{query:string ,shown?:boolean,setShown?:React.Dispatch<React.SetStateAction<boolean>> ,setQuery: React.Dispatch<React.SetStateAction<string>>,conversationId?:string}){
     const ref=useRef<HTMLInputElement>(null);
     // The error occurs because TypeScript doesn't know the ref will be attached to an input element before useEffect runs. Fix it by typing the ref properly:
     // typescriptconst ref = useRef<HTMLInputElement>(null);
@@ -13,6 +13,7 @@ export default function QueryBox({query,setQuery,shown,setShown,conversationId}:
     const inputfiles=useRef<HTMLInputElement>(null);
     const[content,setContent]=useState("")
     const navigate=useNavigate()
+
 
     useEffect(()=>{
         ref.current?.focus();
@@ -66,7 +67,7 @@ export default function QueryBox({query,setQuery,shown,setShown,conversationId}:
     return(<div>
         <input placeholder="type your query" type="text" value={query} ref={ref} className="w-[400px] max-h-[200px] " onChange={(e)=>{
             setQuery(e.target.value);
-            e.target.value==""?setShown(true):setShown(false)
+            e.target.value==""?setShown?.(true):setShown?.(false)
         }}/>
         <input type="file" ref={inputfiles} onChange={(e)=>{
             const newfiles=Array.from(e.target.files as ArrayLike<File>);//remember that e.target.files is not recognized as array so you told ts that its an array
