@@ -2,12 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import QueryBox from "../components/headerComponents/queryBox";
 import { ArrowLeft, Bot, User } from "lucide-react";
+import type { Message } from "../lib/types";
 
-interface Message {
-  content: string;
-  id: string;
-  role: string;
-}
 
 export default function Conversation() {
   const [query, setQuery] = useState("");
@@ -16,6 +12,9 @@ export default function Conversation() {
   const conversationId = params.conversationId;
   const [content, setContent] = useState<Message[] | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const sendmessage=(message)=>{
+    setContent((prev)=>{return[...prev,...message]})
+  }
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -101,7 +100,7 @@ export default function Conversation() {
 
       {/* Input */}
       <div className="shrink-0 px-6 pb-6 pt-2">
-        <QueryBox query={query} setQuery={setQuery} conversationId={conversationId} />
+        <QueryBox sendmessage={sendmessage} query={query} setQuery={setQuery} conversationId={conversationId} />
       </div>
     </div>
   );
