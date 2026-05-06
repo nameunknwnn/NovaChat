@@ -6,10 +6,7 @@ import jwt from "jsonwebtoken";
 import middlewareauth from "./lib/middlewareauth.js";
 import bcrypt from "bcrypt";
 import cors from "cors";
-
-
-
-
+import Razorpay from "razorpay";
 
 const app = express();
 
@@ -23,6 +20,10 @@ const client = new OpenRouter({
   apiKey: `${process.env.OPENROUTER_API_KEY}`,
 });
 
+const razorpay= new Razorpay({
+  key_id:"rzp_test_Sm7plr82eFMZvT",
+  key_secret:"V3I7fpZ8Ug9YBGKwIzxyhJfS"
+})
 
 //signup
 app.post("/signup", async function (req, res) {
@@ -227,5 +228,21 @@ app.get(
     }
   },
 );
+
+app.post("/order", async (req, res) => {
+  try {
+    const order = await razorpay.orders.create({
+      amount: 50000, // ₹500
+      currency: "INR",
+      receipt: `receipt_${Date.now()}`,
+    });
+
+    res.json(order);
+  } catch (err) {
+    res.status(500).json({
+      message: "Failed to create order",
+    });
+  }
+});
 
 app.listen(3000);

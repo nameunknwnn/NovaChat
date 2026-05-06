@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Wand2, Compass, Code2, GraduationCap } from "lucide-react";
+import {Payment} from "../../payment/payment";
+import { Button } from "../ui/button";
 
 type QuestionsType = {
   create: string[];
@@ -35,6 +37,13 @@ export default function WelcomeDashboard({ username, questions, setQuery, setSho
           How can I help you?
         </h1>
       </div>
+      <div>
+        
+      </div>
+      <Button onClick={()=>{Payment()}}>
+        pay
+        </Button>
+     
 
       {/* Category pills */}
       <div className="flex items-center gap-2 p-1 rounded-xl bg-muted/60 border border-border">
@@ -53,6 +62,7 @@ export default function WelcomeDashboard({ username, questions, setQuery, setSho
           </button>
         ))}
       </div>
+    
 
       {/* Suggestion cards */}
       <div className="grid grid-cols-2 gap-3 w-full max-w-xl">
