@@ -3,12 +3,12 @@ import Sidebar from "./components/sidebar"
 
 function App() {
   return (
-   <div>
-    <div className="flex justify-center ">
-      <div className="w-1/4"><Sidebar /></div>
-      <div className="w-3/4"><Header /></div>
+    <div className="flex h-screen w-screen overflow-hidden bg-background">
+      <Sidebar />
+      <div className="flex-1 overflow-hidden">
+        <Header />
+      </div>
     </div>
-   </div>
   )
 }
 

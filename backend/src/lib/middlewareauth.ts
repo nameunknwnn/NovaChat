@@ -36,7 +36,7 @@ export default async function middlewareauth(req:Request,res:Response,next:NextF
         req.user=userfound;
         next();
     }catch(e){
-        res.status(500).json(e);
+        res.status(401).json(e);
     }
   
 }

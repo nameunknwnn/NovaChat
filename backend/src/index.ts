@@ -74,7 +74,7 @@ app.post("/signin", async function (req, res) {
     if (!truepassword) {
       return res.status(401).json({ message: "password not correct" });
     }
-    const token = jwt.sign({email:email}, `${process.env.JWT_SECRET}`);
+    const token = jwt.sign({email:email}, `${process.env.JWT_SECRET}`,{ expiresIn: "1h" });
 
     res.status(200).json({ message: "Signin successful", token: token });
   } catch (e) {

@@ -1,61 +1,108 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router"
+import { useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router";
 import QueryBox from "../components/headerComponents/queryBox";
-import { Button } from "../components/ui/button";
+import { ArrowLeft, Bot, User } from "lucide-react";
 
-interface Messages{
-    content:string,
-    id:string,
-    role:string
+interface Message {
+  content: string;
+  id: string;
+  role: string;
 }
 
-interface Conversation{
-    id:string,
-    title:string,
-    messages:Messages[]
+export default function Conversation() {
+  const [query, setQuery] = useState("");
+  const params = useParams();
+  const navigate = useNavigate();
+  const conversationId = params.conversationId;
+  const [content, setContent] = useState<Message[] | null>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
-}
-
-
-export default function Conversation(){
-    const [query,setQuery]=useState("")
-    const params=useParams();
-    const navigate=useNavigate();
-    const conversationId= params.conversationId;
-    const [content,setContent]= useState<Messages[]|null>(null);
-    useEffect(()=>{
-        const token=localStorage.getItem("token")
-        const fetchdata=async()=>{
-            const res=await fetch(`${import.meta.env.VITE_BACKEND_URL}/conversation/${conversationId}`,{
-                method:"GET",
-                headers:{
-                    "authorization":`Bearer ${token}`
-                }
-            })
-            const data=await res.json();
-            console.log(data,"this si carya i")
-            setContent(data.conversation.messages)
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const fetchdata = async () => {
+      const res = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/conversation/${conversationId}`,
+        {
+          method: "GET",
+          headers: { authorization: `Bearer ${token}` },
         }
-            fetchdata();
-    },[])   
+      );
+      if (res.status === 401) {
+        localStorage.setItem("token", "");
+        navigate("/signin");
+        return;
+      }
+      const data = await res.json();
+      setContent(data.conversation.messages);
+    };
+    fetchdata();
+  }, [conversationId]);
 
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [content]);
 
-    return(
-    <div className="text-black p-4 space-y-2">
-        <Button className="text-green-500" onClick={()=>{navigate("/")}}>
-            go back
-        </Button>
-        {content ? (content.map((content)=>(
-            <div className={`flex ${content.role==="USER"? "justify-start":"justify-end"} `}>
-              <div className="p-4 border bg-gray space-y-2 max-w-xl">  {content.role}
+  return (
+    <div className="flex flex-col h-screen bg-background">
+      {/* Top bar */}
+      <div className="flex items-center gap-3 px-6 py-4 border-b border-border shrink-0">
+        <button
+          onClick={() => navigate("/")}
+          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <ArrowLeft size={16} />
+          Back
+        </button>
+      </div>
 
-                              <div>  {content.content}</div>
-              </div>
-
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto scrollbar-thin px-4 py-6">
+        {content === null ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="flex flex-col items-center gap-3 text-muted-foreground">
+              <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+              <p className="text-sm">Loading conversation...</p>
             </div>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-6 max-w-2xl mx-auto w-full">
+            {content.map((msg) => (
+              <div
+                key={msg.id}
+                className={`flex gap-3 ${msg.role === "USER" ? "flex-row-reverse" : "flex-row"}`}
+              >
+                {/* Avatar */}
+                <div
+                  className={`flex items-center justify-center w-8 h-8 rounded-full shrink-0 ${
+                    msg.role === "USER"
+                      ? "bg-primary/20 text-primary"
+                      : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  {msg.role === "USER" ? <User size={14} /> : <Bot size={14} />}
+                </div>
 
-        ))) : "Loading..."}
-        <QueryBox query={query} setQuery={setQuery}  conversationId={conversationId}/>
-    </div>)
+                {/* Bubble */}
+                <div
+                  className={`max-w-[75%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${
+                    msg.role === "USER"
+                      ? "bg-primary text-primary-foreground rounded-tr-sm"
+                      : "bg-card border border-border text-foreground rounded-tl-sm"
+                  }`}
+                >
+                  {msg.content}
+                </div>
+              </div>
+            ))}
+            <div ref={bottomRef} />
+          </div>
+        )}
+      </div>
 
-} 
+      {/* Input */}
+      <div className="shrink-0 px-6 pb-6 pt-2">
+        <QueryBox query={query} setQuery={setQuery} conversationId={conversationId} />
+      </div>
+    </div>
+  );
+}
