@@ -15,3 +15,11 @@ export const ContentRole = {
 } as const
 
 export type ContentRole = (typeof ContentRole)[keyof typeof ContentRole]
+
+
+export const AuthType = {
+  GOOGLE: 'GOOGLE',
+  GITHUB: 'GITHUB'
+} as const
+
+export type AuthType = (typeof AuthType)[keyof typeof AuthType]
