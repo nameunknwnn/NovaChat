@@ -13,10 +13,22 @@ model User{
   id                 String @id @default(uuid())
   name               String
   email              String @unique
-  password           String
+  password           String?
   conversations      Conversation[]
   AuthType           AuthType? @default(GOOGLE)
   authId             String? 
+  profiles           Profile[]
+}
+
+model Profile{
+  id                  String @id @default(uuid())
+  name                String 
+  occupation          String?
+  preferences         String?
+  tratis              String?
+  user                User   @relation(fields:[userId],references: [id])
+  userId              String
+  active              Boolean @default(false)
 }
 
 model Conversation{

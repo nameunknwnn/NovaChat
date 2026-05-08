@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, NavLink } from "react-router";
 import { LogIn, Eye, EyeOff } from "lucide-react";
+import { Button } from "../components/ui/button";
 
 export default function Signin() {
   const backend_url = import.meta.env.VITE_BACKEND_URL;
@@ -33,7 +34,9 @@ export default function Signin() {
       setLoading(false);
     }
   };
-
+    const handleGoogleLogin = () => {
+      window.location.href = 'http://localhost:3000/auth/google';
+};
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
@@ -107,6 +110,11 @@ export default function Signin() {
                 </>
               )}
             </button>
+            <Button className="" onClick={()=>{
+              handleGoogleLogin()
+            }}>
+                connect with Google
+            </Button>
           </form>
         </div>
 

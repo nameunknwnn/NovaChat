@@ -52,6 +52,7 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  Profile: 'Profile',
   Conversation: 'Conversation',
   Message: 'Message'
 } as const
@@ -82,6 +83,19 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const ProfileScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  occupation: 'occupation',
+  preferences: 'preferences',
+  tratis: 'tratis',
+  userId: 'userId',
+  active: 'active'
+} as const
+
+export type ProfileScalarFieldEnum = (typeof ProfileScalarFieldEnum)[keyof typeof ProfileScalarFieldEnum]
 
 
 export const ConversationScalarFieldEnum = {
