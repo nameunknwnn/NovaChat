@@ -10,20 +10,23 @@ export default function QueryBox({
   shown,
   setShown,
   conversationId,
-  sendmessage
+  sendmessage,
+  setAiMessage
 }: {
   query: string;
   shown?: boolean;
   setShown?: React.Dispatch<React.SetStateAction<boolean>>;
   setQuery: React.Dispatch<React.SetStateAction<string>>;
   conversationId?: string;
-  sendmessage?:(message:Message[])=>void
+  sendmessage?:(message:Message[])=>void;
+  setAiMessage?: React.Dispatch<React.SetStateAction<string>>;
 }) {
   const ref = useRef<HTMLTextAreaElement>(null);
   const [files, setFiles] = useState<File[]>([]);
   const inputfiles = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const [isSending, setIsSending] = useState(false);
+  
 
   useEffect(() => {
     ref.current?.focus();
@@ -72,7 +75,7 @@ export default function QueryBox({
     try {
       const token = localStorage.getItem("token");
       const cId = await fetchConversationId();
-      sendmessage([{content:query,id:cId,role:"USER"}])
+      sendmessage?.([{content:query,id:cId,role:"USER"}])
       setQuery("");
       const chat = await fetch(`${import.meta.env.VITE_BACKEND_URL}/chat`, {
         method: "POST",
@@ -87,9 +90,21 @@ export default function QueryBox({
         navigate("/signin");
         return;
       }
-      const data=await chat.json()
-      sendmessage([{content:data.llm_response,id:cId,role:"ASSISTANT"}])
-      
+      const reader=chat.body?.getReader();
+      const decoder = new TextDecoder();
+      let fullText = "";
+      while (true){
+        const {done,value}=await reader!.read();
+        if (done) break;
+        const chunk = decoder.decode(value);
+        fullText += chunk;
+
+        setAiMessage(fullText);
+
+      }
+      sendmessage?.([{content:fullText,id:cId,role:"ASSISTANT"}])
+      setAiMessage?.("")
+
       if (!conversationId){
         navigate(`/c/${cId}`);
       }

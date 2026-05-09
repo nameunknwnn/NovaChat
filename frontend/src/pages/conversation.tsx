@@ -10,10 +10,11 @@ export default function Conversation() {
   const params = useParams();
   const navigate = useNavigate();
   const conversationId = params.conversationId;
+  const [aiMessage,setAiMessage]=useState("");
   const [content, setContent] = useState<Message[] | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
-  const sendmessage=(message)=>{
-    setContent((prev)=>{return[...prev,...message]})
+  const sendmessage=(message: Message[])=>{
+    setContent((prev) => [...(prev ?? []), ...message])
   }
 
   useEffect(() => {
@@ -93,6 +94,16 @@ export default function Conversation() {
                 </div>
               </div>
             ))}
+            {aiMessage && (
+              <div className="flex gap-3 flex-row">
+                <div className="flex items-center justify-center w-8 h-8 rounded-full shrink-0 bg-muted text-muted-foreground">
+                  <Bot size={14} />
+                </div>
+                <div className="max-w-[75%] px-4 py-3 rounded-2xl text-sm leading-relaxed bg-card border border-border text-foreground rounded-tl-sm">
+                  {aiMessage}
+                </div>
+              </div>
+            )}
             <div ref={bottomRef} />
           </div>
         )}
@@ -100,7 +111,7 @@ export default function Conversation() {
 
       {/* Input */}
       <div className="shrink-0 px-6 pb-6 pt-2">
-        <QueryBox sendmessage={sendmessage} query={query} setQuery={setQuery} conversationId={conversationId} />
+        <QueryBox sendmessage={sendmessage} setAiMessage={setAiMessage} query={query} setQuery={setQuery} conversationId={conversationId} />
       </div>
     </div>
   );

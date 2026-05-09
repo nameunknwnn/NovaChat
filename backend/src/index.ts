@@ -244,6 +244,8 @@ app.post("/conversation", middlewareauth, async function (req, res) {
 
 
 app.post("/chat", middlewareauth, async (req: any, res: any) => {
+  res.setHeader("Content-Type","text/plain")
+  res.setHeader("Transfer-Encoding","chunked")
   try {
     const { prompt, conversationId } = req.body;
     const email = req.user.email;
@@ -261,11 +263,16 @@ app.post("/chat", middlewareauth, async (req: any, res: any) => {
       });
     }
 
-    // Find conversation
+    // Find conversation (fetch history before saving current message)
     const conversation = await prisma.conversation.findFirst({
       where: {
         id: conversationId,
         userId: user.id,
+      },
+      include: {
+        messages: {
+          orderBy: { createdAt: "asc" },
+        },
       },
     });
 
@@ -298,12 +305,15 @@ app.post("/chat", middlewareauth, async (req: any, res: any) => {
       //@ts-ignore
       const systemprompt=SYSTEM_PROMPT(profile.name,profile.occupation,profile.tratis,profile.preferences)
       messages.push({
-      role: "user",
-      content: prompt,
-    });
-      messages.push({
         role: "system",
         content: systemprompt,
+      });
+    }
+
+    for (const msg of conversation.messages) {
+      messages.push({
+        role: msg.role === "USER" ? "user" : "assistant",
+        content: msg.content,
       });
     }
 
@@ -317,23 +327,33 @@ app.post("/chat", middlewareauth, async (req: any, res: any) => {
       chatRequest: {
         messages,
         model: "openai/gpt-oss-120b:free",
+        stream:true
       },
     });
+    let finalAnswer = "";
 
-    const answer = result?.choices?.[0]?.message?.content || "";
+
+    for await (const chunk of result) {
+      const content = chunk.choices?.[0]?.delta?.content || "";
+      if (content) {
+        finalAnswer+=content;
+        res.write(content)
+      }
+      if (chunk.usage) {
+        console.log('Usage:', chunk.usage);
+      }
+    }
+
 
     // Save assistant response
     await prisma.message.create({
       data: {
-        content: answer,
+        content: finalAnswer,
         role: "ASSISTANT",
         conversationId: conversation.id,
       },
     });
-
-    return res.status(200).json({
-      llm_response: answer,
-    });
+     res.end()
 
   } catch (e) {
     console.log(e);
