@@ -90,7 +90,7 @@ export default function Conversation() {
                       : "bg-card border border-border text-foreground rounded-tl-sm"
                   }`}
                 >
-
+                  {msg.content}
                 </div>
               </div>
             ))}
