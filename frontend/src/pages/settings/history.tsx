@@ -53,38 +53,38 @@ export default function HistorySettings() {
   return (
     <div className="max-w-2xl space-y-8">
       <div>
-        <h1 className="text-2xl font-semibold">History &amp; Sync</h1>
+        <h1 className="text-2xl font-semibold">Chat History</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Your past conversations. Click any to resume.
+          You can back up your chat history from here to restore or transfer your conversations later.
         </p>
       </div>
 
       {loading ? (
-        <div className="flex items-center gap-2 text-muted-foreground text-sm py-8">
+        <div className="flex items-center gap-2 text-muted-foreground text-sm py-10">
           <Loader2 size={16} className="animate-spin" />
-          Loading conversations…
+          Loading conversations...
         </div>
       ) : conversations.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-border p-10 text-center">
-          <MessageSquare size={32} className="mx-auto text-muted-foreground/40 mb-3" />
+        <div className="rounded-xl border border-dashed border-border/60 p-12 text-center">
+          <MessageSquare size={32} className="mx-auto text-muted-foreground/30 mb-3" />
           <p className="text-sm text-muted-foreground">No conversations yet.</p>
           <button
-            className="mt-3 text-xs underline text-muted-foreground hover:text-foreground"
+            className="mt-3 text-xs text-primary hover:text-primary/80 font-medium transition-colors"
             onClick={() => navigate("/")}
           >
             Start chatting
           </button>
         </div>
       ) : (
-        <div className="rounded-lg border border-border overflow-hidden">
+        <div className="rounded-xl border border-border/50 overflow-hidden">
           {/* Table header */}
-          <div className="grid grid-cols-[1fr_auto] px-4 py-2.5 bg-muted/30 border-b border-border">
+          <div className="grid grid-cols-[1fr_auto] px-5 py-3 bg-muted/20 border-b border-border/40">
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Title</span>
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">When</span>
           </div>
 
           {/* Rows */}
-          <div className="divide-y divide-border">
+          <div className="divide-y divide-border/40">
             {conversations.map((conv) => {
               const lastMessage = conv.messages?.[conv.messages.length - 1];
               const when = lastMessage?.createdAt ? timeAgo(lastMessage.createdAt) : "—";
@@ -93,13 +93,13 @@ export default function HistorySettings() {
                 <button
                   key={conv.id}
                   onClick={() => navigate(`/c/${conv.id}`)}
-                  className="w-full grid grid-cols-[1fr_auto] items-center px-4 py-3.5 hover:bg-accent/40 transition-colors group text-left"
+                  className="w-full grid grid-cols-[1fr_auto] items-center px-5 py-4 hover:bg-accent/30 transition-all duration-150 group text-left"
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <MessageSquare size={14} className="text-muted-foreground shrink-0" />
+                    <MessageSquare size={14} className="text-muted-foreground/50 shrink-0" />
                     <div className="min-w-0">
                       <p className="text-sm font-medium truncate">{conv.title || "Untitled"}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">
+                      <p className="text-xs text-muted-foreground/60 mt-0.5">
                         {conv.messages?.length ?? 0} message{conv.messages?.length !== 1 ? "s" : ""}
                       </p>
                     </div>

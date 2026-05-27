@@ -1,0 +1,148 @@
+export interface Model {
+  id: string;
+  name: string;
+  provider: string;
+  description: string;
+  tags: string[];
+  providerColor: string;
+  providerInitial: string;
+  pricing?: string;
+}
+
+export const FREE_MODELS: Model[] = [
+  {
+    id: "qwen/qwen3-coder:free",
+    name: "Qwen3 Coder",
+    provider: "Qwen",
+    description: "State-of-the-art code generation with 1M context",
+    tags: ["free", "coding", "1M ctx"],
+    providerColor: "bg-indigo-500/20 text-indigo-400",
+    providerInitial: "Q",
+  },
+  {
+    id: "deepseek/deepseek-v4-flash:free",
+    name: "DeepSeek V4 Flash",
+    provider: "DeepSeek",
+    description: "Fast reasoning model with 1M context window",
+    tags: ["free", "reasoning", "1M ctx"],
+    providerColor: "bg-orange-500/20 text-orange-400",
+    providerInitial: "D",
+  },
+  {
+    id: "openai/gpt-oss-120b:free",
+    name: "GPT OSS 120B",
+    provider: "OpenAI",
+    description: "Full-size open-source GPT with strong reasoning",
+    tags: ["free", "open-source"],
+    providerColor: "bg-emerald-500/20 text-emerald-400",
+    providerInitial: "O",
+  },
+  {
+    id: "openai/gpt-oss-20b:free",
+    name: "GPT OSS 20B",
+    provider: "OpenAI",
+    description: "Efficient open-source GPT model",
+    tags: ["free", "open-source", "fast"],
+    providerColor: "bg-emerald-500/20 text-emerald-400",
+    providerInitial: "O",
+  },
+  {
+    id: "google/gemma-4-31b-it:free",
+    name: "Gemma 4 31B",
+    provider: "Google",
+    description: "Google's most capable free model with vision support",
+    tags: ["free", "multimodal"],
+    providerColor: "bg-blue-500/20 text-blue-400",
+    providerInitial: "G",
+  },
+  {
+    id: "google/gemma-4-26b-a4b-it:free",
+    name: "Gemma 4 26B A4B",
+    provider: "Google",
+    description: "Efficient multimodal Google MoE with optional thinking",
+    tags: ["free", "open-source"],
+    providerColor: "bg-blue-500/20 text-blue-400",
+    providerInitial: "G",
+  },
+  {
+    id: "meta-llama/llama-3.3-70b-instruct:free",
+    name: "Llama 3.3 70B",
+    provider: "Meta",
+    description: "Strong general-purpose model for diverse tasks",
+    tags: ["free", "open-source"],
+    providerColor: "bg-violet-500/20 text-violet-400",
+    providerInitial: "M",
+  },
+  {
+    id: "nvidia/nemotron-3-super-120b-a12b:free",
+    name: "Nemotron 3 Super 120B",
+    provider: "NVIDIA",
+    description: "High-capability NVIDIA model with MoE architecture",
+    tags: ["free", "reasoning"],
+    providerColor: "bg-green-500/20 text-green-400",
+    providerInitial: "N",
+  },
+  {
+    id: "nvidia/nemotron-3-nano-30b-a3b:free",
+    name: "Nemotron 3 Nano 30B",
+    provider: "NVIDIA",
+    description: "Fast and efficient NVIDIA model for everyday tasks",
+    tags: ["free", "fast"],
+    providerColor: "bg-green-500/20 text-green-400",
+    providerInitial: "N",
+  },
+  {
+    id: "deepseek/deepseek-r1:free",
+    name: "DeepSeek R1",
+    provider: "DeepSeek",
+    description: "Strong open-source reasoning model",
+    tags: ["free", "reasoning"],
+    providerColor: "bg-orange-500/20 text-orange-400",
+    providerInitial: "D",
+  },
+  {
+    id: "qwen/qwen3-next-80b-a3b-instruct:free",
+    name: "Qwen3 Next 80B",
+    provider: "Qwen",
+    description: "Large MoE model with strong instruction following",
+    tags: ["free", "open-source"],
+    providerColor: "bg-indigo-500/20 text-indigo-400",
+    providerInitial: "Q",
+  },
+  {
+    id: "minimax/minimax-m2.5:free",
+    name: "MiniMax M2.5",
+    provider: "MiniMax",
+    description: "Versatile model with balanced performance",
+    tags: ["free"],
+    providerColor: "bg-pink-500/20 text-pink-400",
+    providerInitial: "Mx",
+  },
+  {
+    id: "z-ai/glm-4.5-air:free",
+    name: "GLM 4.5 Air",
+    provider: "Z.ai",
+    description: "Chinese-developed model with broad capabilities",
+    tags: ["free"],
+    providerColor: "bg-cyan-500/20 text-cyan-400",
+    providerInitial: "Z",
+  },
+  {
+    id: "poolside/laguna-m.1:free",
+    name: "Laguna M.1",
+    provider: "Poolside",
+    description: "Code-focused model from Poolside AI",
+    tags: ["free", "coding"],
+    providerColor: "bg-teal-500/20 text-teal-400",
+    providerInitial: "P",
+  },
+  {
+    id: "meta-llama/llama-3.2-3b-instruct:free",
+    name: "Llama 3.2 3B",
+    provider: "Meta",
+    description: "Ultra-fast lightweight model for simple tasks",
+    tags: ["free", "lite", "fast"],
+    providerColor: "bg-violet-500/20 text-violet-400",
+    providerInitial: "M",
+  },
+];

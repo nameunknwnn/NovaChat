@@ -11,12 +11,13 @@ import { OAuth2Client } from "google-auth-library";
 import crypto from "crypto";
 import { SYSTEM_PROMPT } from "./lib/prompts/profileprompts.js";
 
-
 const app = express();
 
-app.use(cors({
-  origin:`${process.env.FRONTEND_URL}`
-}))
+app.use(
+  cors({
+    origin: `${process.env.FRONTEND_URL}`,
+  }),
+);
 
 app.use(express.json());
 
@@ -24,19 +25,16 @@ const client = new OpenRouter({
   apiKey: `${process.env.OPENROUTER_API_KEY}`,
 });
 
-const razorpay= new Razorpay({
-  key_id:"rzp_test_Sm7plr82eFMZvT",
-  key_secret:"V3I7fpZ8Ug9YBGKwIzxyhJfS"
-})
-
-
-
+const razorpay = new Razorpay({
+  key_id: "rzp_test_Sm7plr82eFMZvT",
+  key_secret: "V3I7fpZ8Ug9YBGKwIzxyhJfS",
+});
 
 const REDIRECT_URI = `${process.env.APP_URL}/auth/google/callback`;
 
 const googleClient = new OAuth2Client({
   clientId: process.env.GOOGLE_AUTH_CLIENT!,
-  clientSecret: process.env.GOOGLE_AUTH_SECRET !,
+  clientSecret: process.env.GOOGLE_AUTH_SECRET!,
   redirectUri: REDIRECT_URI,
 });
 
@@ -78,7 +76,6 @@ function validateState(state) {
   return true;
 }
 
-
 app.get("/auth/google", (_, res) => {
   const params = new URLSearchParams({
     client_id: process.env.GOOGLE_AUTH_CLIENT!,
@@ -93,7 +90,6 @@ app.get("/auth/google", (_, res) => {
 
   return res.redirect(GOOGLE_URL);
 });
-
 
 app.get("/auth/google/callback", async (req, res, next) => {
   const { code, state } = req.query;
@@ -116,52 +112,53 @@ app.get("/auth/google/callback", async (req, res, next) => {
 
     const payload = ticket.getPayload();
 
-    const { email, name } = payload;
+    const { email, name, picture } = payload;
 
-    if(!payload?.email){
-        return res.json({message:"user dont have any email "})
-      }
-    if(!payload?.name){
-        return res.json({message:"user dont have any name "})
-      }
+    if (!payload?.email) {
+      return res.json({ message: "user dont have any email " });
+    }
+    if (!payload?.name) {
+      return res.json({ message: "user dont have any name " });
+    }
 
-    const user= await prisma.user.findUnique({
-      where:{
-        email:payload?.email
-      }
-    })
+    const user = await prisma.user.findUnique({
+      where: {
+        email: payload?.email,
+      },
+    });
 
-
-    if (user){
+    if (user) {
       await prisma.user.update({
-        where:{email:payload?.email},
-        data:{
-          name:payload?.name
-        }
-      })
+        where: { email: payload?.email },
+        data: {
+          name: payload?.name,
+          image: picture || null,
+        },
+      });
     }
 
-    if (!user){
+    if (!user) {
       await prisma.user.create({
-        data:{
-          email:payload?.email,
-          name:payload?.name
-        }
-      })
-
+        data: {
+          email: payload?.email,
+          name: payload?.name,
+          image: picture || null,
+        },
+      });
     }
-    
-    const token = jwt.sign({email:payload?.email},`${process.env.JWT_SECRET}`,{ expiresIn: "1h" })
+
+    const token = jwt.sign(
+      { email: payload?.email },
+      `${process.env.JWT_SECRET}`,
+      { expiresIn: "1h" },
+    );
     return res.redirect(
-      `${process.env.FRONTEND_URL}/auth/success?token=${token}`
+      `${process.env.FRONTEND_URL}/auth/success?token=${token}`,
     );
   } catch (error) {
     return next(error);
   }
 });
-
-
-
 
 //signup
 app.post("/signup", async function (req, res) {
@@ -191,7 +188,6 @@ app.post("/signup", async function (req, res) {
   }
 });
 
-
 //signin
 app.post("/signin", async function (req, res) {
   const email = req.body.email;
@@ -213,14 +209,15 @@ app.post("/signin", async function (req, res) {
     if (!truepassword) {
       return res.status(401).json({ message: "password not correct" });
     }
-    const token = jwt.sign({email:email}, `${process.env.JWT_SECRET}`,{ expiresIn: "1h" });
+    const token = jwt.sign({ email: email }, `${process.env.JWT_SECRET}`, {
+      expiresIn: "1h",
+    });
 
     res.status(200).json({ message: "Signin successful", token: token });
   } catch (e) {
     res.status(500).json(e);
   }
 });
-
 
 app.post("/conversation", middlewareauth, async function (req, res) {
   const email = req.user.email;
@@ -239,15 +236,16 @@ app.post("/conversation", middlewareauth, async function (req, res) {
       userId: user.id,
     },
   });
-  res.status(200).json({ message: "conversation created" , conversationId:conversation.id});
+  res
+    .status(200)
+    .json({ message: "conversation created", conversationId: conversation.id });
 });
 
-
 app.post("/chat", middlewareauth, async (req: any, res: any) => {
-  res.setHeader("Content-Type","text/plain")
-  res.setHeader("Transfer-Encoding","chunked")
+  res.setHeader("Content-Type", "text/plain");
+  res.setHeader("Transfer-Encoding", "chunked");
   try {
-    const { prompt, conversationId } = req.body;
+    const { prompt, conversationId, model } = req.body;
     const email = req.user.email;
 
     // Find user
@@ -303,7 +301,12 @@ app.post("/chat", middlewareauth, async (req: any, res: any) => {
 
     if (profile) {
       //@ts-ignore
-      const systemprompt=SYSTEM_PROMPT(profile.name,profile.occupation,profile.tratis,profile.preferences)
+      const systemprompt = SYSTEM_PROMPT(
+        profile.name,
+        profile.occupation,
+        profile.tratis,
+        profile.preferences,
+      );
       messages.push({
         role: "system",
         content: systemprompt,
@@ -323,27 +326,26 @@ app.post("/chat", middlewareauth, async (req: any, res: any) => {
     });
 
     // Call model
+    const selectedModel = model || "deepseek/deepseek-v4-flash:free";
     const result = await client.chat.send({
       chatRequest: {
         messages,
-        model: "openai/gpt-oss-120b:free",
-        stream:true
+        model: selectedModel,
+        stream: true,
       },
     });
     let finalAnswer = "";
 
-
     for await (const chunk of result) {
       const content = chunk.choices?.[0]?.delta?.content || "";
       if (content) {
-        finalAnswer+=content;
-        res.write(content)
+        finalAnswer += content;
+        res.write(content);
       }
       if (chunk.usage) {
-        console.log('Usage:', chunk.usage);
+        console.log("Usage:", chunk.usage);
       }
     }
-
 
     // Save assistant response
     await prisma.message.create({
@@ -353,8 +355,7 @@ app.post("/chat", middlewareauth, async (req: any, res: any) => {
         conversationId: conversation.id,
       },
     });
-     res.end()
-
+    res.end();
   } catch (e) {
     console.log(e);
 
@@ -363,7 +364,6 @@ app.post("/chat", middlewareauth, async (req: any, res: any) => {
     });
   }
 });
-
 
 app.get("/conversation", middlewareauth, async function (req, res) {
   const email = req.user.email;
@@ -381,25 +381,24 @@ app.get("/conversation", middlewareauth, async function (req, res) {
       where: {
         userId: user.id,
       },
-      include:{
-        messages:true
-      }
+      include: {
+        messages: true,
+      },
     });
-    res.status(200).json({conversation:conversation});
+    res.status(200).json({ conversation: conversation });
   } catch (e) {
     res.status(500).json(e);
   }
 });
-
 
 app.get(
   "/conversation/:conversationId",
   middlewareauth,
   async function (req, res) {
     const userid = req.user.id;
-    console.log(userid,"reached user id")
+    console.log(userid, "reached user id");
     const conversationId = req.params.conversationId;
-    console.log(conversationId,"reached conversation id")
+    console.log(conversationId, "reached conversation id");
     if (!conversationId || Array.isArray(conversationId)) {
       return res.json({ message: "invalid conversation id" });
     }
@@ -409,15 +408,15 @@ app.get(
           id: conversationId,
           userId: userid,
         },
-        include:{
-          messages:true
-        }
+        include: {
+          messages: true,
+        },
       });
       if (!conversation) {
         return res.status(401).json({ message: "fraud" });
       }
 
-      res.status(200).json({conversation:conversation});
+      res.status(200).json({ conversation: conversation });
     } catch (e) {
       res.status(500).json({ message: e });
     }
@@ -442,6 +441,7 @@ app.post("/order", async (req, res) => {
 
 app.get("/profile", middlewareauth, async (req, res) => {
   const userId = req.user.id;
+
   try {
     const profiles = await prisma.profile.findMany({
       where: { userId },
@@ -453,61 +453,93 @@ app.get("/profile", middlewareauth, async (req, res) => {
   }
 });
 
-app.post("/profile",middlewareauth,async(req,res)=>{
-    const name=req.body.name;
-    const preferences=req.body.preferences
-    const traits=req.body.traits
-    const occupation=req.body.occupation
-    const userId=req.user.id;
-    const id =req.body.profileId
+app.post("/profile", middlewareauth, async (req, res) => {
+  const name = req.body.name;
+  const preferences = req.body.preferences;
+  const traits = req.body.traits;
+  const occupation = req.body.occupation;
+  const userId = req.user.id;
+  const id = req.body.profileId || "";
 
-    const profile= await prisma.profile.findUnique({
-      where:{
-        id:id
-      }
-    })
-    if (profile){
-      await prisma.profile.updateMany({
-        data:{
-          active:false
-        }
-      })
-      await prisma.profile.update({
-        where:{
-          id:id
-        },
-        data:{
-          active:true
-        }
-      })
-      res.status(200).json({message:"profile set to active"})
-    }else{
-      await prisma.profile.create({
-      data:{
+  console.log(userId);
+  console.log(id);
+
+  const profiles = await prisma.profile.findUnique({
+    where: {
+      id: id,
+    },
+  });
+  if (profiles) {
+    await prisma.profile.updateMany({
+      data: {
+        active: false,
+      },
+    });
+    await prisma.profile.update({
+      where: {
+        id: id,
+      },
+      data: {
+        active: true,
+      },
+    });
+    res.status(200).json({ message: "profile set to active" });
+  } else {
+    await prisma.profile.updateMany({
+      data: {
+        active: false,
+      },
+    });
+    await prisma.profile.create({
+      data: {
         name,
         occupation,
         preferences,
-        tratis:traits,
-        userId:userId,
-        active:true
-      }
-    })
-    res.status(200).json({message:"profile is created"})
-    }
+        tratis: traits,
+        userId: userId,
+        active: true,
+      },
+    });
+    res.status(200).json({ message: "profile is created" });
+  }
+});
 
-    
-    
-})
+app.patch("/profile", middlewareauth, async (req, res) => {
+  const name = req.body.name;
+  const preferences = req.body.preferences;
+  const traits = req.body.traits;
+  const occupation = req.body.occupation;
+  const userId = req.user.id;
+  const id = req.body.id || "";
 
-app.get("/user",middlewareauth,async(req,res)=>{
-  const userId=req.user.id;
-  const user= await prisma.user.findUnique({
-    where:{
-      id:userId
-    }
-  })
-  res.status(200).json({user:user})
-})
+  await prisma.profile.updateMany({
+    data: {
+      active: false,
+    },
+  });
+  await prisma.profile.update({
+    where: {
+      id: id
+    },
+    data: {
+      active: true,
+      name,
+      preferences,
+      tratis:traits,
+      occupation
+    },
+  });
+  res.status(200).json({ message: "profile updated " });
+});
 
+app.get("/user", middlewareauth, async (req, res) => {
+  const userId = req.user.id;
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+  });
+  res.status(200).json({ user: user });
+});
 
 app.listen(3000);

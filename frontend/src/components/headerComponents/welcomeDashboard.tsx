@@ -1,7 +1,5 @@
 import { useState } from "react";
-import { Wand2, Compass, Code2, GraduationCap } from "lucide-react";
-import {Payment} from "../../payment/payment";
-import { Button } from "../ui/button";
+import { Sparkles, Compass, Code2, GraduationCap } from "lucide-react";
 
 type QuestionsType = {
   create: string[];
@@ -18,7 +16,7 @@ type Props = {
 };
 
 const categories = [
-  { key: "create", label: "Create", icon: Wand2 },
+  { key: "create", label: "Create", icon: Sparkles },
   { key: "explore", label: "Explore", icon: Compass },
   { key: "code", label: "Code", icon: Code2 },
   { key: "learn", label: "Learn", icon: GraduationCap },
@@ -30,30 +28,21 @@ export default function WelcomeDashboard({ username, questions, setQuery, setSho
   const [activeCategory, setActiveCategory] = useState<CategoryKey>("create");
 
   return (
-    <div className="flex flex-col items-center justify-center h-full px-6 gap-8">
-      {/* Heading */}
-      <div className="text-center space-y-2">
-        <h1 className="text-4xl font-semibold text-foreground tracking-tight">
-          How can I help you?
+    <div className="flex flex-col items-center justify-center h-full px-6 gap-10 animate-in fade-in duration-500">
+      <div className="text-center space-y-1">
+        <h1 className="text-3xl md:text-4xl font-semibold text-foreground tracking-tight">
+          How can I help you, <span className="text-primary">{username}</span>?
         </h1>
       </div>
-      <div>
-        
-      </div>
-      <Button onClick={()=>{Payment()}}>
-        pay
-        </Button>
-     
 
-      {/* Category pills */}
-      <div className="flex items-center gap-2 p-1 rounded-xl bg-muted/60 border border-border">
+      <div className="flex items-center gap-1.5 p-1 rounded-full bg-muted/40 border border-border/60 backdrop-blur-sm">
         {categories.map(({ key, label, icon: Icon }) => (
           <button
             key={key}
             onClick={() => setActiveCategory(key)}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
               activeCategory === key
-                ? "bg-background text-foreground shadow-sm"
+                ? "bg-card text-foreground shadow-sm border border-border/50"
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
@@ -62,10 +51,8 @@ export default function WelcomeDashboard({ username, questions, setQuery, setSho
           </button>
         ))}
       </div>
-    
 
-      {/* Suggestion cards */}
-      <div className="grid grid-cols-2 gap-3 w-full max-w-xl">
+      <div className="flex flex-col gap-0.5 w-full max-w-lg">
         {questions[activeCategory].map((q, i) => (
           <button
             key={i}
@@ -73,13 +60,14 @@ export default function WelcomeDashboard({ username, questions, setQuery, setSho
               setQuery(q);
               setShown(false);
             }}
-            className="px-4 py-3 rounded-xl bg-card border border-border text-sm text-foreground/80 hover:text-foreground hover:border-primary/40 hover:bg-card/80 transition-all text-left leading-snug"
+            className="px-4 py-3.5 rounded-xl text-sm text-foreground/70 hover:text-foreground hover:bg-accent/40 transition-all duration-150 text-left leading-relaxed group"
           >
-            {q}
+            <span className="group-hover:translate-x-0.5 inline-block transition-transform duration-150">
+              {q}
+            </span>
           </button>
         ))}
       </div>
     </div>
   );
 }
-

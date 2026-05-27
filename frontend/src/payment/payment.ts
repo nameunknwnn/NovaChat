@@ -1,6 +1,9 @@
-interface Window {
+declare global {
+  interface Window {
     Razorpay: any;
   }
+}
+
 
 export async function Payment() {
     // STEP 1 → ask backend to create order

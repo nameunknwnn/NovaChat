@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import QueryBox from "./headerComponents/queryBox";
 import WelcomeDashboard from "./headerComponents/welcomeDashboard";
 
@@ -32,13 +32,39 @@ const questions = {
 export default function Header() {
   const [query, setQuery] = useState("");
   const [shown, setShown] = useState(true);
+  const [username, setUsername] = useState("there");
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/user`, {
+      headers: { authorization: `Bearer ${token}` },
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data?.user?.name) setUsername(data.user.name);
+        else if (data?.user?.email) setUsername(data.user.email.split("@")[0]);
+      })
+      .catch(() => {});
+
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/profile`, {
+      headers: { authorization: `Bearer ${token}` },
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        const active = (data.profiles || []).find((p: any) => p.active);
+        if (active) setUsername(active.name);
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <div className="flex flex-col h-screen bg-background">
       <div className="flex-1 overflow-y-auto">
         {shown ? (
           <WelcomeDashboard
-            username="Aditya"
+            username={username}
             questions={questions}
             setQuery={setQuery}
             setShown={setShown}
