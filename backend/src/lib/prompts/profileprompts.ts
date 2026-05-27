@@ -1,4 +1,4 @@
-export function SYSTEM_PROMPT( name?:string, occupation?:string,traits?:string,preferences?:string){
+export function SYSTEM_PROMPT( name?:string | null, occupation?:string | null,traits?:string | null,preferences?:string | null){
     return(
         `this is the name of the person the agent needs to call him this ${name} 
 this is the occupation of the person the agent needs to remeber this ${occupation}  

@@ -54,8 +54,12 @@ function makeState() {
   return `${encoded}.${sig}`;
 }
 
-function validateState(state) {
-  const [encoded, sig] = state.split(".");
+function validateState(state: string) {
+  const parts = state.split(".");
+  const encoded = parts[0];
+  const sig = parts[1];
+
+  if (!encoded || !sig) return false;
 
   const expectedSig = crypto
     .createHmac("sha256", process.env.STATE_SECRET!)
@@ -94,7 +98,8 @@ app.get("/auth/google", (_, res) => {
 app.get("/auth/google/callback", async (req, res, next) => {
   const { code, state } = req.query;
 
-  if (!code || !state) return next(new Error("Missing Google credential"));
+  if (!code || !state || typeof state !== "string")
+    return next(new Error("Missing Google credential"));
 
   const isValid = validateState(state);
 
@@ -112,8 +117,6 @@ app.get("/auth/google/callback", async (req, res, next) => {
 
     const payload = ticket.getPayload();
 
-    const { email, name, picture } = payload;
-
     if (!payload?.email) {
       return res.json({ message: "user dont have any email " });
     }
@@ -121,18 +124,20 @@ app.get("/auth/google/callback", async (req, res, next) => {
       return res.json({ message: "user dont have any name " });
     }
 
+    const { email, name, picture } = payload;
+
     const user = await prisma.user.findUnique({
       where: {
-        email: payload?.email,
+        email: payload.email,
       },
     });
 
     if (user) {
       await prisma.user.update({
-        where: { email: payload?.email },
+        where: { email: payload.email },
         data: {
-          name: payload?.name,
-          image: picture || null,
+          name: payload.name,
+          image: picture ?? null,
         },
       });
     }
@@ -140,15 +145,15 @@ app.get("/auth/google/callback", async (req, res, next) => {
     if (!user) {
       await prisma.user.create({
         data: {
-          email: payload?.email,
-          name: payload?.name,
-          image: picture || null,
+          email: payload.email,
+          name: payload.name,
+          image: picture ?? null,
         },
       });
     }
 
     const token = jwt.sign(
-      { email: payload?.email },
+      { email: payload.email },
       `${process.env.JWT_SECRET}`,
       { expiresIn: "1h" },
     );
@@ -220,7 +225,7 @@ app.post("/signin", async function (req, res) {
 });
 
 app.post("/conversation", middlewareauth, async function (req, res) {
-  const email = req.user.email;
+  const email = req.user!.email;
   const prompt = req.body.prompt;
   const user = await prisma.user.findFirst({
     where: {
@@ -241,12 +246,12 @@ app.post("/conversation", middlewareauth, async function (req, res) {
     .json({ message: "conversation created", conversationId: conversation.id });
 });
 
-app.post("/chat", middlewareauth, async (req: any, res: any) => {
+app.post("/chat", middlewareauth, async (req, res) => {
   res.setHeader("Content-Type", "text/plain");
   res.setHeader("Transfer-Encoding", "chunked");
   try {
     const { prompt, conversationId, model } = req.body;
-    const email = req.user.email;
+    const email = req.user!.email;
 
     // Find user
     const user = await prisma.user.findUnique({
@@ -300,7 +305,6 @@ app.post("/chat", middlewareauth, async (req: any, res: any) => {
     const messages: any[] = [];
 
     if (profile) {
-      //@ts-ignore
       const systemprompt = SYSTEM_PROMPT(
         profile.name,
         profile.occupation,
@@ -366,7 +370,7 @@ app.post("/chat", middlewareauth, async (req: any, res: any) => {
 });
 
 app.get("/conversation", middlewareauth, async function (req, res) {
-  const email = req.user.email;
+  const email = req.user!.email;
   try {
     const user = await prisma.user.findFirst({
       where: {
@@ -395,7 +399,7 @@ app.get(
   "/conversation/:conversationId",
   middlewareauth,
   async function (req, res) {
-    const userid = req.user.id;
+    const userid = req.user!.id;
     console.log(userid, "reached user id");
     const conversationId = req.params.conversationId;
     console.log(conversationId, "reached conversation id");
@@ -440,7 +444,7 @@ app.post("/order", async (req, res) => {
 });
 
 app.get("/profile", middlewareauth, async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.user!.id;
 
   try {
     const profiles = await prisma.profile.findMany({
@@ -458,7 +462,7 @@ app.post("/profile", middlewareauth, async (req, res) => {
   const preferences = req.body.preferences;
   const traits = req.body.traits;
   const occupation = req.body.occupation;
-  const userId = req.user.id;
+  const userId = req.user!.id;
   const id = req.body.profileId || "";
 
   console.log(userId);
@@ -509,7 +513,7 @@ app.patch("/profile", middlewareauth, async (req, res) => {
   const preferences = req.body.preferences;
   const traits = req.body.traits;
   const occupation = req.body.occupation;
-  const userId = req.user.id;
+  const userId = req.user!.id;
   const id = req.body.id || "";
 
   await prisma.profile.updateMany({
@@ -533,7 +537,7 @@ app.patch("/profile", middlewareauth, async (req, res) => {
 });
 
 app.get("/user", middlewareauth, async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.user!.id;
   const user = await prisma.user.findUnique({
     where: {
       id: userId,
