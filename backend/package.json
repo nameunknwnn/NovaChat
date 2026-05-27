@@ -7,7 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx src/index.ts",
-    "build": "npx prisma generate && tsc -b",
+    "build": "rm -rf node_modules/@prisma/client && npx prisma generate && tsc -b",
     "start": "node dist/index.js"
   },
   "keywords": [],
