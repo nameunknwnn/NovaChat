@@ -66,7 +66,7 @@ export default function Profile() {
           />
         </div>
         <div>
-          anything else novachat should knwo about 
+          anything else novachat should know about 
           <input
             placeholder="preferences"
             type="text"
