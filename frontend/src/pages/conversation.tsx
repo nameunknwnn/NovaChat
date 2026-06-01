@@ -102,7 +102,7 @@ export default function Conversation() {
                   <Bot size={14} />
                 </div>
                 <div className="max-w-[78%] px-4 py-3 rounded-2xl text-sm leading-relaxed bg-card/80 border border-border/50 text-foreground rounded-tl-md">
-                  <div className="prose prose-invert prose-sm max-w-none [&>p]:mb-2 [&>p:last-child]:mb-0">
+                  <div className="prose prose-invert prose-sm  [&>p]:mb-2 [&>p:last-child]:mb-0">
                     <Markdown>{aiMessage}</Markdown>
                   </div>
                 </div>
