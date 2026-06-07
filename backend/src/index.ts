@@ -4,7 +4,7 @@ import { OpenRouter } from "@openrouter/sdk";
 import { prisma } from "./lib/prisma.js";
 import jwt from "jsonwebtoken";
 import middlewareauth from "./lib/middlewareauth.js";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import cors from "cors";
 import Razorpay from "razorpay";
 import { OAuth2Client } from "google-auth-library";
@@ -546,4 +546,8 @@ app.get("/user", middlewareauth, async (req, res) => {
   res.status(200).json({ user: user });
 });
 
-app.listen(3000);
+if (!process.env.VERCEL) {
+  app.listen(3000);
+}
+
+export default app;
