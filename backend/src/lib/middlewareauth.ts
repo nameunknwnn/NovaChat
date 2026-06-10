@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { prisma } from "./prisma";
+import { prisma } from "./prisma.js";
 import type { NextFunction, Request, Response } from "express";
 
 export default async function middlewareauth(req:Request,res:Response,next:NextFunction){

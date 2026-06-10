@@ -1,7 +1,7 @@
 import passport from "passport";
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
-import {prisma} from "../prisma"
+import {prisma} from "../prisma.js"
 
 
 
