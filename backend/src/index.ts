@@ -249,24 +249,19 @@ app.post("/conversation", middlewareauth, async function (req, res) {
 app.post("/chat", middlewareauth, async (req, res) => {
   res.setHeader("Content-Type", "text/plain");
   res.setHeader("Transfer-Encoding", "chunked");
+  let headersSent = false;
   try {
     const { prompt, conversationId, model } = req.body;
     const email = req.user!.email;
 
-    // Find user
     const user = await prisma.user.findUnique({
-      where: {
-        email,
-      },
+      where: { email },
     });
 
     if (!user) {
-      return res.status(404).json({
-        message: "User not found",
-      });
+      return res.status(404).json({ message: "User not found" });
     }
 
-    // Find conversation (fetch history before saving current message)
     const conversation = await prisma.conversation.findFirst({
       where: {
         id: conversationId,
@@ -280,12 +275,9 @@ app.post("/chat", middlewareauth, async (req, res) => {
     });
 
     if (!conversation) {
-      return res.status(404).json({
-        message: "Conversation not found",
-      });
+      return res.status(404).json({ message: "Conversation not found" });
     }
 
-    // Save user message
     await prisma.message.create({
       data: {
         content: prompt,
@@ -294,14 +286,13 @@ app.post("/chat", middlewareauth, async (req, res) => {
       },
     });
 
-    // Get active profile
     const profile = await prisma.profile.findFirst({
       where: {
         active: true,
+        userId: user.id,
       },
     });
 
-    // Build messages array
     const messages: any[] = [];
 
     if (profile) {
@@ -329,7 +320,6 @@ app.post("/chat", middlewareauth, async (req, res) => {
       content: prompt,
     });
 
-    // Call model
     const selectedModel = model || "deepseek/deepseek-v4-flash:free";
     const result = await client.chat.send({
       chatRequest: {
@@ -343,15 +333,12 @@ app.post("/chat", middlewareauth, async (req, res) => {
     for await (const chunk of result) {
       const content = chunk.choices?.[0]?.delta?.content || "";
       if (content) {
+        headersSent = true;
         finalAnswer += content;
         res.write(content);
       }
-      if (chunk.usage) {
-        console.log("Usage:", chunk.usage);
-      }
     }
 
-    // Save assistant response
     await prisma.message.create({
       data: {
         content: finalAnswer,
@@ -360,8 +347,21 @@ app.post("/chat", middlewareauth, async (req, res) => {
       },
     });
     res.end();
-  } catch (e) {
-    console.log(e);
+  } catch (e: any) {
+    console.error("Chat error:", e?.message ?? e, e?.statusCode ?? "", e?.body ?? "");
+
+    if (headersSent) {
+      return res.end();
+    }
+
+    const status = e?.statusCode ?? 500;
+    if (status === 429) {
+      const retryAfter = e?.body?.error?.metadata?.retry_after_seconds ?? 10;
+      return res.status(429).json({
+        message: `Model is rate-limited. Please retry in ${retryAfter} seconds.`,
+        retryAfter,
+      });
+    }
 
     return res.status(500).json({
       message: "Internal server error",

@@ -260,6 +260,13 @@ export default function QueryBox({
         navigate("/signin");
         return;
       }
+      if (!chat.ok) {
+        const err = await chat.json().catch(() => null);
+        const errMsg = err?.message ?? "Something went wrong. Please try again.";
+        sendmessage?.([{ content: errMsg, id: cId, role: "ASSISTANT" }]);
+        if (!conversationId) navigate(`/c/${cId}`);
+        return;
+      }
       const reader = chat.body?.getReader();
       const decoder = new TextDecoder();
       let fullText = "";
