@@ -1,5 +1,4 @@
-import type { AuthType } from "../generated/prisma/enums.js";
-
+import type { AuthType } from "@prisma/client";
 declare global {
   namespace Express {
     interface User {
